@@ -11,16 +11,18 @@ float Brightness;
 float w;
 float h;
 
-int Granularity;
+int GranularityX;
+int GranularityY;
+int GranularityZ;
 
 texture DensityMap;
 sampler DensityMapSampler = sampler_state {
 texture = <DensityMap>;
- AddressU = clamp;
- AddressV = clamp;
- magfilter = POINT; 
- minfilter = POINT; 
- mipfilter=POINT; 
+    AddressU = clamp;
+    AddressV = clamp;
+    magfilter = POINT;
+    minfilter = POINT;
+    mipfilter = POINT;
 };
 
 float3 BackgroundColor;
@@ -130,17 +132,66 @@ float3 GetColor()
     //return float3(0.70 + 0.3 * sin(t), 0.3 + 0.7 * sin(t), 1);
 }
 
-float GetDensityAtVoxel(int3 Voxel, float Granularity)
+float2 GetUVofVoxel(int3 Voxel, int3 Granularity)
 {
-    float2 UV = float2(Voxel.x / Granularity, Voxel.y / (Granularity * Granularity) + Voxel.z / Granularity);
+    return float2((float) Voxel.x / Granularity.x, (float) Voxel.y / (Granularity.y * Granularity.z) + (float) Voxel.z / Granularity.z);
+}
+
+float fade(float t)
+{
+    // Fade function as defined by Ken Perlin.  This eases coordinate values
+    // so that they will ease towards integral values.  This ends up smoothing
+    // the final output.
+    return t * t * t * (t * (t * 6 - 15) + 10); // 6t^5 - 15t^4 + 10t^3
+}
+
+float GetDensityAtVoxel(float3 FVoxel, int3 Granularity)
+{
     
-    float x_mul = (1 + sin(t + (0 * 3.14) / 3));
+    /*float3 position = ceil(FVoxel) - floor(FVoxel);
+    
+    int3 v_000 = (int3) floor(FVoxel);
+    int3 v_001 = v_000 + int3(0, 0, 1);
+    int3 v_010 = v_000 + int3(0, 1, 0);
+    int3 v_011 = v_000 + int3(0, 1, 1);
+    int3 v_100 = v_000 + int3(1, 0, 0);
+    int3 v_101 = v_000 + int3(1, 0, 1);
+    int3 v_110 = v_000 + int3(1, 1, 0);
+    int3 v_111 = v_000 + int3(1, 1, 1);
+    
+    float i_000 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_000, Granularity), 0.0f, 0.0f)).x;
+    float i_001 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_001, Granularity), 0.0f, 0.0f)).x;
+    float i_010 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_010, Granularity), 0.0f, 0.0f)).x;
+    float i_011 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_011, Granularity), 0.0f, 0.0f)).x;
+    float i_100 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_100, Granularity), 0.0f, 0.0f)).x;
+    float i_101 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_101, Granularity), 0.0f, 0.0f)).x;
+    float i_110 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_110, Granularity), 0.0f, 0.0f)).x;
+    float i_111 = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(v_111, Granularity), 0.0f, 0.0f)).x;
+    
+    float LerpSquare1 = lerp(
+                             lerp(i_000, i_100, fade(position.x)),
+                             lerp(i_010, i_110, fade(position.x)),
+                             fade(position.y));
+
+    float LerpSquare2 = lerp(
+                             lerp(i_001, i_101, fade(position.x)),
+                             lerp(i_011, i_111, fade(position.x)),
+                             fade(position.y));
+
+    float result = lerp(LerpSquare1, LerpSquare2, fade(position.z));
+    */
+    
+    float result = tex2Dlod(DensityMapSampler, float4(GetUVofVoxel(FVoxel, Granularity), 0.0f, 0.0f)).x;
+    
+    
+    /*float x_mul = (1 + sin(t + (0 * 3.14) / 3));
     float y_mul = (1 + sin(t + (2 * 3.14) / 3));
     float z_mul = (1 + sin(t + (4 * 3.14) / 3));
     
-    float3 multiplier = float3(x_mul, y_mul, z_mul) / 3;
+    float3 multiplier = float3(1.0f, 0, 0);*/
+    //float3(x_mul, y_mul, z_mul) / 3;
     
-    return dot(tex2Dlod(DensityMapSampler, float4(UV, 0.0f, 0.0f)).xyz, multiplier) * Brightness;
+    return result * Brightness;
 }
 
 struct VertexShaderInput
@@ -208,27 +259,56 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     //float granularity = (float) Granularity;
     
     float intensity = 0.0f;// = distance(AlterInterSectionPoint, InterSectionPoint) / 5;
-    int steps = trunc(distance(InterSectionPoint, AlterInterSectionPoint) * (float) Granularity);
-    float partial_step = distance(InterSectionPoint, AlterInterSectionPoint) * (float) Granularity - steps;
-    float distance_through_box = distance(InterSectionPoint, AlterInterSectionPoint);
+    
+    float3 CenteredIntersectionPoint = InterSectionPoint - CornerMin;
+    float3 CenteredAlterIntersectionPoint = AlterInterSectionPoint - CornerMin;
+    
+    float3 ScaledCenteredIntersectionPoint = CenteredIntersectionPoint / (CornerMax - CornerMin);
+    float3 ScaledCenteredAlterIntersectionPoint = CenteredAlterIntersectionPoint / (CornerMax - CornerMin);
+    
+    float3 Granularity = int3(GranularityX, GranularityY, GranularityZ);
+    
+    ScaledCenteredIntersectionPoint *= Granularity;
+    ScaledCenteredAlterIntersectionPoint *= Granularity;
+    /*
+    float steps = distance(ScaledCenteredIntersectionPoint, ScaledCenteredAlterIntersectionPoint);
+    
+    float3 Voxel = ScaledCenteredIntersectionPoint;
+    float3 VRay = -normalize(ScaledCenteredIntersectionPoint - ScaledCenteredAlterIntersectionPoint);
+    
+    for (int i = 0; i < trunc(steps); i++)
+    {
+        Voxel += VRay;
+        intensity += GetDensityAtVoxel(Voxel, Granularity);
+        
+        if (i == trunc(steps) - 1)
+        {
+            //last step
+            Voxel += VRay * (steps - trunc(steps));
+            intensity += GetDensityAtVoxel(Voxel, Granularity);
+        }
+    }*/
+    
+    int steps = trunc(distance(ScaledCenteredIntersectionPoint, ScaledCenteredAlterIntersectionPoint));
+    float partial_step = distance(ScaledCenteredIntersectionPoint, ScaledCenteredAlterIntersectionPoint) - steps;
+    float distance_through_box = distance(ScaledCenteredIntersectionPoint, AlterInterSectionPoint);
     float step_length = distance_through_box / (float) steps;
-    float3 position_in_box = InterSectionPoint;
+    float3 position_in_box = ScaledCenteredIntersectionPoint;
+    float3 VRay = -normalize(ScaledCenteredIntersectionPoint - ScaledCenteredAlterIntersectionPoint);
     for (int i = 0; i < steps; i++)
     {
-        position_in_box += Ray * step_length;
-        int3 voxel = GetVoxelIndices(CornerMin, CornerMax, position_in_box, Granularity);
-        intensity += GetDensityAtVoxel(voxel, Granularity);
+        position_in_box += VRay * step_length;
+        intensity += GetDensityAtVoxel(position_in_box, Granularity);
         
         if (i == steps - 1)
         {
             //last step
-            intensity += GetDensityAtVoxel(voxel, Granularity) * partial_step;
+            intensity += GetDensityAtVoxel(position_in_box, Granularity) * partial_step;
         }
 
     }
     
     return float4(lerp(BackgroundColor, GetColor(), intensity), 1);
-
 }
 
 technique Specular

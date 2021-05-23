@@ -36,7 +36,7 @@ namespace CharcoalEngine.Object
         int Granularity = 100;
         Texture2D DensityMap;
 
-        public float Brightness { get; set; } = 0.02f;
+        public float Brightness { get; set; } = 0.08f;
         public float Power { get; set; } = 4;
         public float TimeRate { get; set; } = 0.01f;
         
@@ -62,8 +62,8 @@ namespace CharcoalEngine.Object
 
             //float[,] height = _2DPerlinMap.Create_2D_Perlin_Map_W_Octaves(Granularity, new Random(), 2);
             float[,,] height_x = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond), 5);
-            float[,,] height_y = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+1),5);
-            float[,,] height_z = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+2), 5);
+            //float[,,] height_y = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+1),4);
+            //float[,,] height_z = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+2),4);
 
             for (int i = 0; i < Granularity; i++)
             {
@@ -72,8 +72,8 @@ namespace CharcoalEngine.Object
                     for (int k = 0; k < Granularity; k++)
                     {
                         pixels[i + j * Granularity + k * Granularity * Granularity] = new Vector4((float)Math.Pow((double)((height_x[i, j, k] + 1.0f) / (double)2.0), (double)Power),
-                                                                                                  (float)Math.Pow((double)((height_y[i, j, k] + 1.0f) / (double)2.0), (double)Power),
-                                                                                                  (float)Math.Pow((double)((height_z[i, j, k] + 1.0f) / (double)2.0), (double)Power), 1);
+                                                                                                  /*(float)Math.Pow((double)((height_y[i, j, k] + 1.0f) / (double)2.0), (double)Power),
+                                                                                                  (float)Math.Pow((double)((height_z[i, j, k] + 1.0f) / (double)2.0), (double)Power), 1);*/0, 0, 1);
                     }
                 }
             }
@@ -84,7 +84,7 @@ namespace CharcoalEngine.Object
         public float t = 0.0f;
         public override void Draw()
         {
-            t += TimeRate;
+            t += TimeRate*0.0f;
             effect.Parameters["World"].SetValue(AbsoluteWorld);
             effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(AbsoluteWorld));
 
@@ -100,9 +100,11 @@ namespace CharcoalEngine.Object
             effect.Parameters["FarClip"].SetValue(Camera.Viewport.MaxDepth);
 
             effect.Parameters["CameraPosition"].SetValue(Camera.Position);
-            effect.Parameters["BackgroundColor"].SetValue(Color.CornflowerBlue.ToVector3());
+            effect.Parameters["BackgroundColor"].SetValue(Color.Black.ToVector3());
             effect.Parameters["DensityMap"].SetValue(DensityMap);
-            effect.Parameters["Granularity"].SetValue(Granularity);
+            effect.Parameters["GranularityX"].SetValue(Granularity);
+            effect.Parameters["GranularityY"].SetValue(Granularity);
+            effect.Parameters["GranularityZ"].SetValue(Granularity);
             effect.Parameters["Brightness"].SetValue(Brightness);
             effect.Parameters["t"].SetValue(t);
 
