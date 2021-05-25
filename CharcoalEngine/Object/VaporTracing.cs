@@ -33,7 +33,7 @@ namespace CharcoalEngine.Object
         Effect effect;
         VertexPositionColor[] V;
         //density voxels per unit
-        int Granularity = 100;
+        int Granularity = 32;
         Texture2D DensityMap;
 
         public float Brightness { get; set; } = 0.08f;
@@ -101,7 +101,7 @@ namespace CharcoalEngine.Object
 
             effect.Parameters["CameraPosition"].SetValue(Camera.Position);
             effect.Parameters["BackgroundColor"].SetValue(Color.Black.ToVector3());
-            effect.Parameters["DensityMap"].SetValue(DensityMap);
+            //effect.Parameters["DensityMap"].SetValue(DensityMap);
             effect.Parameters["GranularityX"].SetValue(Granularity);
             effect.Parameters["GranularityY"].SetValue(Granularity);
             effect.Parameters["GranularityZ"].SetValue(Granularity);
