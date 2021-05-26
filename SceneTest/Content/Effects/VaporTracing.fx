@@ -103,9 +103,9 @@ float DistanceToBox(float3 Min, float3 Max, float3 Position, float3 Ray)
     return min(min(ZPlaneMin, ZPlaneMax), min(min(XPlaneMin, XPlaneMax), min(YPlaneMin, YPlaneMax)));
 }
 
-float3 GetVoxelIndices(float3 CMin, float3 CMax, float3 Position, int VoxelsPerUnit)
+int3 GetVoxelIndices(float3 CMin, float3 CMax, float3 Position, int VoxelsPerUnit)
 {
-    return float3(VoxelsPerUnit * (Position - CMin) / (CMax - CMin));
+    return int3(trunc(VoxelsPerUnit * (Position - CMin) / (CMax - CMin)));
 }
 
 /*float3 GetDensityAtVoxel(int3 Voxel, int Granularity)
@@ -218,9 +218,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float distance_through_box = distance(InterSectionPoint, AlterInterSectionPoint);
     float step_length = distance_through_box / (float) steps;
     float3 position_in_box = InterSectionPoint;
-    for (int i = 0; i < steps; i++)
+    for (int i = 0; i < steps*4; i++)
     {
-        position_in_box += Ray * step_length;
+        position_in_box += Ray * step_length/4;
         float3 voxel = GetVoxelIndices(CornerMin, CornerMax, position_in_box, Granularity);
         intensity += GetDensityAtVoxel(voxel, Granularity);
         
@@ -229,7 +229,6 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
             //last step
             intensity += GetDensityAtVoxel(voxel, Granularity) * partial_step;
         }
-
     }
     
     return float4(lerp(BackgroundColor, GetColor(), intensity), 1);

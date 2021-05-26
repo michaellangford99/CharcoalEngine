@@ -33,7 +33,7 @@ namespace CharcoalEngine.Object
         Effect effect;
         VertexPositionColor[] V;
         //density voxels per unit
-        int Granularity = 32;
+        int Granularity = 103;
         Texture2D DensityMap;
 
         public float Brightness { get; set; } = 0.08f;
@@ -58,10 +58,10 @@ namespace CharcoalEngine.Object
 
             DensityMap = new Texture2D(Engine.g, Granularity, Granularity * Granularity, false, SurfaceFormat.Vector4);
 
-            Vector4[] pixels = new Vector4[Granularity * Granularity * Granularity];
+            //Vector4[] pixels = new Vector4[Granularity * Granularity * Granularity];
 
             //float[,] height = _2DPerlinMap.Create_2D_Perlin_Map_W_Octaves(Granularity, new Random(), 2);
-            float[,,] height_x = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond), 5);
+            //float[,,] height_x = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond), 5);
             //float[,,] height_y = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+1),4);
             //float[,,] height_z = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+2),4);
 
@@ -71,14 +71,14 @@ namespace CharcoalEngine.Object
                 {
                     for (int k = 0; k < Granularity; k++)
                     {
-                        pixels[i + j * Granularity + k * Granularity * Granularity] = new Vector4((float)Math.Pow((double)((height_x[i, j, k] + 1.0f) / (double)2.0), (double)Power),
+                        //pixels[i + j * Granularity + k * Granularity * Granularity] = new Vector4((float)Math.Pow((double)((height_x[i, j, k] + 1.0f) / (double)2.0), (double)Power),
                                                                                                   /*(float)Math.Pow((double)((height_y[i, j, k] + 1.0f) / (double)2.0), (double)Power),
-                                                                                                  (float)Math.Pow((double)((height_z[i, j, k] + 1.0f) / (double)2.0), (double)Power), 1);*/0, 0, 1);
+                                                                                                  (float)Math.Pow((double)((height_z[i, j, k] + 1.0f) / (double)2.0), (double)Power), 1);*///0, 0, 1);
                     }
                 }
             }
 
-            DensityMap.SetData(pixels, 0, Granularity*Granularity* Granularity);
+            //DensityMap.SetData(pixels, 0, Granularity*Granularity* Granularity);
         }
 
         public float t = 0.0f;
