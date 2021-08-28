@@ -60,6 +60,7 @@
     <Compile Include="Editing\GizmoComponent.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Object\RayMarchedObject.cs" />
+    <Compile Include="Object\VaporSim.cs" />
     <Compile Include="Object\VaporTracing.cs" />
     <Compile Include="Object\RayTracing.cs" />
     <Compile Include="Object\Sphere.cs" />

@@ -63,7 +63,8 @@ namespace CharcoalEngine.Scene
             ((RayMarching)DrawingSystems[0]).RegisterItem(Root.Children[1]);*/
 
             DrawingSystems.Add(new CustomFXVertexDrawingSystem());
-            Root.Children.Add(new VaporTracing());
+            Root.Children.Add(new VaporSim2D(1000, 1000/*g.Viewport.Height, g.Viewport.Height*/));
+            //Root.Children.Add(new VaporTracing());
             DrawingSystems[0].RegisterItem(Root.Children[0]);
         }
 

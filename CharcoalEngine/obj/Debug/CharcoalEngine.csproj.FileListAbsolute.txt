@@ -66,3 +66,26 @@ C:\Users\Michael\OneDrive - Purdue University Fort Wayne\DontAskQuestions\Charco
 C:\Users\Michael\OneDrive - Purdue University Fort Wayne\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.csproj.CopyComplete
 C:\Users\Michael\OneDrive - Purdue University Fort Wayne\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.dll
 C:\Users\Michael\OneDrive - Purdue University Fort Wayne\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.pdb
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\CharcoalEngine.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\CharcoalEngine.pdb
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\MonoGame.Framework.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.MediaFoundation.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.XAudio2.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.DXGI.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.Direct3D11.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.Direct2D1.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.XInput.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\MonoGame.Framework.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.MediaFoundation.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.XAudio2.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.DXGI.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.Direct3D11.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.Direct2D1.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\bin\Debug\SharpDX.XInput.xml
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.csprojAssemblyReference.cache
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.csproj.CoreCompileInputs.cache
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.csproj.CopyComplete
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.dll
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\CharcoalEngine\obj\Debug\CharcoalEngine.pdb

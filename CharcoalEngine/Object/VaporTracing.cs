@@ -33,12 +33,19 @@ namespace CharcoalEngine.Object
         Effect effect;
         VertexPositionColor[] V;
         //density voxels per unit
-        int Granularity = 103;
+        int Granularity = 100;
         Texture2D DensityMap;
+        Texture2D DepthMap;
 
-        public float Brightness { get; set; } = 0.08f;
+        public override void UpdateMatrix()
+        {
+            this.YawPitchRoll = Vector3.Zero;
+            base.UpdateMatrix();
+        }
+
+        public float Brightness { get; set; } = 0.3f;
         public float Power { get; set; } = 4;
-        public float TimeRate { get; set; } = 0.01f;
+        public float TimeRate { get; set; } = 0.001f;
         
         public VaporTracing()
         {
@@ -54,14 +61,14 @@ namespace CharcoalEngine.Object
             V[4] = new VertexPositionColor(new Vector3(1, 1, 0.0f), new Color(1.0f, 1.0f, 1.0f, 0));
             V[5] = new VertexPositionColor(new Vector3(1, -1, 0.0f), new Color(1.0f, 1.0f, 1.0f, 0));
 
-            LocalBoundingBox = new BoundingBox(-Vector3.One, Vector3.One);
+            LocalBoundingBox = new BoundingBox(-Vector3.One/2, Vector3.One/2);
 
             DensityMap = new Texture2D(Engine.g, Granularity, Granularity * Granularity, false, SurfaceFormat.Vector4);
 
-            //Vector4[] pixels = new Vector4[Granularity * Granularity * Granularity];
+            Vector4[] pixels = new Vector4[Granularity * Granularity * Granularity];
 
             //float[,] height = _2DPerlinMap.Create_2D_Perlin_Map_W_Octaves(Granularity, new Random(), 2);
-            //float[,,] height_x = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond), 5);
+            float[,,] height_x = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond), 3);
             //float[,,] height_y = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+1),4);
             //float[,,] height_z = _3DPerlinMap.Create_3D_Perlin_Map_W_Octaves(Granularity, new Random(System.DateTime.Now.Millisecond+2),4);
 
@@ -71,25 +78,31 @@ namespace CharcoalEngine.Object
                 {
                     for (int k = 0; k < Granularity; k++)
                     {
-                        //pixels[i + j * Granularity + k * Granularity * Granularity] = new Vector4((float)Math.Pow((double)((height_x[i, j, k] + 1.0f) / (double)2.0), (double)Power),
+                        pixels[i + j * Granularity + k * Granularity * Granularity] = new Vector4((float)Math.Pow((double)((height_x[i, j, k] + 1.0f) / (double)2.0), (double)Power),
                                                                                                   /*(float)Math.Pow((double)((height_y[i, j, k] + 1.0f) / (double)2.0), (double)Power),
-                                                                                                  (float)Math.Pow((double)((height_z[i, j, k] + 1.0f) / (double)2.0), (double)Power), 1);*///0, 0, 1);
+                                                                                                  (float)Math.Pow((double)((height_z[i, j, k] + 1.0f) / (double)2.0), (double)Power), 1);*/0, 0, 1);
                     }
                 }
             }
 
-            //DensityMap.SetData(pixels, 0, Granularity*Granularity* Granularity);
+            DensityMap.SetData(pixels, 0, Granularity*Granularity* Granularity);
         }
 
         public float t = 0.0f;
+
+        public void SetSceneDepthMap(Texture2D depthmap)
+        {
+            DepthMap = depthmap;
+        }
+
         public override void Draw()
         {
-            t += TimeRate*0.0f;
+            t += TimeRate;
             effect.Parameters["World"].SetValue(AbsoluteWorld);
             effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(AbsoluteWorld));
 
-            effect.Parameters["CornerMin"].SetValue(-Vector3.One);
-            effect.Parameters["CornerMax"].SetValue(Vector3.One);
+            effect.Parameters["CornerMin"].SetValue(-Vector3.One/2);
+            effect.Parameters["CornerMax"].SetValue(Vector3.One/2);
 
             effect.Parameters["ViewProjection"].SetValue(Camera.View * Camera.Projection);
             effect.Parameters["InverseViewProjection"].SetValue(Matrix.Invert(Camera.View * Camera.Projection));
@@ -101,10 +114,8 @@ namespace CharcoalEngine.Object
 
             effect.Parameters["CameraPosition"].SetValue(Camera.Position);
             effect.Parameters["BackgroundColor"].SetValue(Color.Black.ToVector3());
-            //effect.Parameters["DensityMap"].SetValue(DensityMap);
-            effect.Parameters["GranularityX"].SetValue(Granularity);
-            effect.Parameters["GranularityY"].SetValue(Granularity);
-            effect.Parameters["GranularityZ"].SetValue(Granularity);
+            effect.Parameters["DensityMap"].SetValue(DensityMap);
+            effect.Parameters["Granularity"].SetValue(Granularity);
             effect.Parameters["Brightness"].SetValue(Brightness);
             effect.Parameters["t"].SetValue(t);
 

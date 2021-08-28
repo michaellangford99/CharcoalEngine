@@ -11,9 +11,7 @@ float Brightness;
 float w;
 float h;
 
-int GranularityX;
-int GranularityY;
-int GranularityZ;
+int Granularity;
 
 texture DensityMap;
 sampler DensityMapSampler = sampler_state
@@ -21,9 +19,9 @@ sampler DensityMapSampler = sampler_state
     texture = <DensityMap>;
     AddressU = clamp;
     AddressV = clamp;
-    magfilter = POINT;
-    minfilter = POINT;
-    mipfilter = POINT;
+    magfilter = LINEAR;
+    minfilter = LINEAR;
+    mipfilter = LINEAR;
 };
 
 float3 BackgroundColor;
@@ -105,7 +103,7 @@ float DistanceToBox(float3 Min, float3 Max, float3 Position, float3 Ray)
 
 int3 GetVoxelIndices(float3 CMin, float3 CMax, float3 Position, int VoxelsPerUnit)
 {
-    return int3(trunc(VoxelsPerUnit * (Position - CMin) / (CMax - CMin)));
+    return int3(trunc(VoxelsPerUnit * (Position - CMin)));
 }
 
 /*float3 GetDensityAtVoxel(int3 Voxel, int Granularity)
@@ -128,15 +126,23 @@ float3 GetColor()
     float z_mul = (1 + sin(t + (4 * 3.14) / 3));
     
     float3 multiplier = float3(x_mul, y_mul, z_mul) / 3;
-    return float3(1, 1, 1);
-    //return float3(0.70 + 0.3 * sin(t), 0.3 + 0.7 * sin(t), 1);
+    //return float3(1, 1, 1);
+    return float3(0.70 + 0.3 * sin(t), 0.3 + 0.7 * sin(t), 1);
 }
 
-float GetDensityAtVoxel(float3 Voxel, int Granularity)
+float GetDensityAtVoxel(float3 Voxel, int Granularity, float3 CMin, float3 CMax)
 {
-    return (Voxel.x / (Granularity * Granularity * Granularity)) * Brightness;
+    //number of voxels in l, w, and h
+    int3 LWH = int3(round((CMax - CMin) * (float) Granularity));
+    //float3 centeredVoxel = Voxel - (LWH / 2.0);
+    //return (abs(centeredVoxel.y % (Granularity / 2)) / (Granularity * Granularity)) * Brightness;
+        
+    //return (Voxel.x / (Granularity * Granularity)) * Brightness;
     
-    float2 UV = float2(Voxel.x / Granularity, Voxel.y / ((float) Granularity * Granularity) + Voxel.z / Granularity);
+    
+    float2 UV = float2(Voxel.x / LWH.x, Voxel.y / ((float) LWH.y * LWH.z) + Voxel.z / LWH.z);
+    
+    //float2 UV = float2(Voxel.x / Granularity, Voxel.y / ((float) Granularity * Granularity) + Voxel.z / Granularity);
     
     float x_mul = (1 + sin(t + (0 * 3.14) / 3));
     float y_mul = (1 + sin(t + (2 * 3.14) / 3));
@@ -206,28 +212,22 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float alter_dist = DistanceToBox(CornerMin, CornerMax, AlterStartPoint, -Ray);
     float3 AlterInterSectionPoint = AlterStartPoint + (-Ray) * alter_dist;
     
-    //accessing the texture
-    //float3 internalposition = InterSectionPoint - CornerMin;
-    
-    //float granularity = (float) Granularity;
-    int Granularity = GranularityX;
-    
     float intensity = 0.0f; // = distance(AlterInterSectionPoint, InterSectionPoint) / 5;
     int steps = trunc(distance(InterSectionPoint, AlterInterSectionPoint) * (float) Granularity);
     float partial_step = distance(InterSectionPoint, AlterInterSectionPoint) * (float) Granularity - steps;
     float distance_through_box = distance(InterSectionPoint, AlterInterSectionPoint);
     float step_length = distance_through_box / (float) steps;
     float3 position_in_box = InterSectionPoint;
-    for (int i = 0; i < steps*4; i++)
+    for (int i = 0; i < steps; i++)
     {
-        position_in_box += Ray * step_length/4;
+        position_in_box += Ray * step_length;
         float3 voxel = GetVoxelIndices(CornerMin, CornerMax, position_in_box, Granularity);
-        intensity += GetDensityAtVoxel(voxel, Granularity);
+        intensity += GetDensityAtVoxel(voxel, Granularity, CornerMin, CornerMax);
         
         if (i == steps - 1)
         {
             //last step
-            intensity += GetDensityAtVoxel(voxel, Granularity) * partial_step;
+            intensity += GetDensityAtVoxel(voxel, Granularity, CornerMin, CornerMax) * partial_step;
         }
     }
     

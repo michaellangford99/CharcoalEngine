@@ -73,6 +73,12 @@
 /processorParam:DebugMode=Debug
 /build:Effects/TextureEffect.fx
 
+#begin Effects/VaporSim.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/VaporSim.fx
+
 #begin Effects/VaporTracing.fx
 /importer:EffectImporter
 /processor:EffectProcessor
