@@ -19,6 +19,7 @@ using Jitter.Collision.Shapes;
 using Jitter.DataStructures;
 using Jitter.Dynamics;
 using Jitter.LinearMath;
+using CharcoalEngine.Utilities;
 
 namespace CharcoalEngine.Scene
 {
@@ -62,10 +63,18 @@ namespace CharcoalEngine.Scene
             Root.Children.Add(new Sphere());
             ((RayMarching)DrawingSystems[0]).RegisterItem(Root.Children[1]);*/
 
-            DrawingSystems.Add(new CustomFXVertexDrawingSystem());
-            Root.Children.Add(new VaporSim2D(1000, 1000/*g.Viewport.Height, g.Viewport.Height*/));
+            // DrawingSystems.Add(new CustomFXVertexDrawingSystem());
+            // Root.Children.Add(new RayTracing());
+            //Root.Children.Add(new VaporSim2D(1000, 1000/*g.Viewport.Height, g.Viewport.Height*/));
             //Root.Children.Add(new VaporTracing());
-            DrawingSystems[0].RegisterItem(Root.Children[0]);
+            // DrawingSystems[0].RegisterItem(Root.Children[0]);
+
+            GBufferRenderer gb = new GBufferRenderer(Engine.g.Viewport);
+
+            DrawingSystems.Add(gb);
+            OBJModel obj = new OBJModel(UserUtilities.OpenFile(UserUtilities.OBJ_FILTER), gb, Vector3.Zero, Vector3.Zero, 1.0f, false);
+            Root.Children.Add(obj);
+            Root.Update();
         }
 
         private void _gizmo_RotateEvent(Transform transformable, TransformationEventArgs e, TransformationEventArgs d)
@@ -81,6 +90,11 @@ namespace CharcoalEngine.Scene
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             Camera.Viewport.Bounds = g.PresentationParameters.Bounds;
+            //notify all draw systems of window size change
+            for (int i = 0; i < DrawingSystems.Count; i++)
+            {
+                DrawingSystems[i].ViewportChanged(Camera.Viewport);
+            }
         }
 
         private KeyboardState _previousKeys;
@@ -137,10 +151,7 @@ namespace CharcoalEngine.Scene
             _previousKeys = _currentKeys;
             _previousMouse = _currentMouse;
 
-            foreach (Transform o in Root.Children)
-            {
-                o.Update();
-            }
+            Root.Update();
         }
 
         private bool IsNewButtonPress(Keys key)
@@ -185,6 +196,7 @@ namespace CharcoalEngine.Scene
             #endregion
 
             _gizmo.Draw();
+            Root.DrawDebugMode();
         }
 
         List<Transform> transforms = new List<Transform>();

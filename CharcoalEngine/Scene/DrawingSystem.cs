@@ -37,6 +37,11 @@ namespace CharcoalEngine.Scene
             Items.Add(t);
         }
 
+        public virtual void ViewportChanged(Viewport v)
+        {
+
+        }
+
         public virtual void Draw()
         {
 

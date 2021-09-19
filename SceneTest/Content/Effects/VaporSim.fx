@@ -65,7 +65,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
     float2 velocity = tex2Dlod(VelocityMapSampler, float4(TexturePosition, 0.0f, 0.0f)).xy;
     
     //sample the density from the velocity point worked backwards
-    float4 sample_position = float4(TexturePosition - velocity / (2000), 0.0f, 0.0f);
+    float4 sample_position = float4(TexturePosition - velocity / (56000), 0.0f, 0.0f);
     
     //density sampled at that position, to be moved to current location
     float density = tex2Dlod(DensityMapSampler, sample_position).x;
@@ -91,7 +91,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
     float2 velocity_sampled = tex2Dlod(VelocityMapSampler, sample_position).xy;
     
     //how fast to equalize nearby densities
-    float density_diffusion_rate = 0.001;
+    float density_diffusion_rate = 0.1;
     //how fast to equalize nearby velocities
     float velocity_diffusion_rate = 0.01;
     
@@ -100,7 +100,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
     //calculate new density from translated location's average density
     float2 new_velocity = velocity_sampled + velocity_diffusion_rate * (velocity_average - velocity_sampled);
 
-    output.Density = float4(new_density, 0.0, 0.0, 1.0);
+    output.Density = float4(new_density, new_density * new_density, sqrt(new_density)/2, 1.0);
     output.Velocity = float4(velocity, 0.0, 1.0);
     
     return output;

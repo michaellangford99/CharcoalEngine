@@ -356,12 +356,13 @@ namespace CharcoalEngine.Object
                 Children[i].Update();
             }
         }
-
-        /// <summary>
-        /// _Not_ to be used for main drawing of 3D entities - should be done by scene manager.
-        /// This handles the drawing of any UI graphics
-        /// </summary>
+        
         public virtual void Draw()
+        {
+            
+        }
+
+        public virtual void DrawDebugMode()
         {
             if (DebugDraw)
             {

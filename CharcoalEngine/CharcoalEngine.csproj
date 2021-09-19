@@ -59,6 +59,8 @@
     <Compile Include="Editing\Geometry.cs" />
     <Compile Include="Editing\GizmoComponent.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Object\Material.cs" />
+    <Compile Include="Object\OBJModel.cs" />
     <Compile Include="Object\RayMarchedObject.cs" />
     <Compile Include="Object\VaporSim.cs" />
     <Compile Include="Object\VaporTracing.cs" />
@@ -69,13 +71,17 @@
     <Compile Include="Scene\Camera.cs" />
     <Compile Include="Scene\CustomFXVertexDrawingSystem.cs" />
     <Compile Include="Scene\DrawingSystem.cs" />
+    <Compile Include="Scene\GBufferRenderer.cs" />
     <Compile Include="Scene\LineUtility3D.cs" />
     <Compile Include="Scene\RayMarching.cs" />
     <Compile Include="Scene\Scene.cs" />
     <Compile Include="Utilities\MapGeneration\2DPerlinMap.cs" />
     <Compile Include="Utilities\MapGeneration\3DPerlinMap.cs" />
+    <Compile Include="Utilities\MTLLoader.cs" />
     <Compile Include="Utilities\OBBCollision.cs" />
+    <Compile Include="Utilities\OBJLoader.cs" />
     <Compile Include="Utilities\TextureImporter.cs" />
+    <Compile Include="Utilities\UserUtilities.cs" />
     <Compile Include="Utilities\Utilities3D.cs" />
   </ItemGroup>
   <ItemGroup>

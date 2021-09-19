@@ -22,6 +22,9 @@ using Jitter.LinearMath;
 
 namespace CharcoalEngine.Scene
 {
+    /// <summary>
+    /// This is for objects that are defining their own drawing process while in development or for a specific design reason
+    /// </summary>
     class CustomFXVertexDrawingSystem : DrawingSystem
     {
         public override void Draw()
