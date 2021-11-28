@@ -5,6 +5,7 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Control Textures/arrow.png</File>
+    <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/DirectionalLight.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/NDT_Effect.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/NormalPixelMapEffect.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/PointLightEffect.fx</File>
@@ -25,6 +26,7 @@
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/ModelTextures/smoke.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

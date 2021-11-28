@@ -70,6 +70,7 @@
     <Content Include="Content\Effects\NDT_Effect.fx" />
     <Content Include="Content\Effects\NormalPixelMapEffect.fx" />
     <Content Include="Content\Effects\PointLightEffect.fx" />
+    <Content Include="Content\Effects\DirectionalLight.fx" />
     <Content Include="Content\Effects\VaporSim.fx" />
     <Content Include="Content\Effects\VaporTracing.fx" />
     <Content Include="Content\Effects\ShadowMapEffect.fx" />

@@ -372,7 +372,7 @@ namespace CharcoalEngine.Object
             }
             for (int i = 0; i < Children.Count; i++)
             {
-                Children[i].Draw();
+                Children[i].DrawDebugMode();
             }
         }
     }

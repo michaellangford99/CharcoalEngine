@@ -47,10 +47,10 @@ namespace CharcoalEngine.Scene
             Rotation = new Quaternion(0, 0, 0, 1);
 
             Viewport = Engine.g.Viewport;
-            Viewport.MinDepth = 0.1f;
-            Viewport.MaxDepth = 1000;
-            Viewport.Width = Engine.g.PresentationParameters.BackBufferWidth;
-            Viewport.Height = Engine.g.PresentationParameters.BackBufferHeight;
+            Viewport.MinDepth = 0.5f;
+            Viewport.MaxDepth = 10;
+            Viewport.Width = 1920;//Engine.g.Viewport.Width;
+            Viewport.Height = 1080;//Engine.g.Viewport.Height;
             Position = new Vector3(0, 2, 6);
             LookAt(Vector3.Zero, 0);
             Update();

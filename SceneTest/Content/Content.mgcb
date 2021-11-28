@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:Control Textures/arrow.png
 
+#begin Effects/DirectionalLight.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/DirectionalLight.fx
+
 #begin Effects/NDT_Effect.fx
 /importer:EffectImporter
 /processor:EffectProcessor

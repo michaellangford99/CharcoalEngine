@@ -69,10 +69,13 @@
     <Compile Include="Object\Transform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene\Camera.cs" />
+    <Compile Include="Scene\DebugOverlayDrawingSystem.cs" />
     <Compile Include="Scene\CustomFXVertexDrawingSystem.cs" />
     <Compile Include="Scene\DrawingSystem.cs" />
+    <Compile Include="Scene\GBufferReliantDrawingSystem.cs" />
     <Compile Include="Scene\GBufferRenderer.cs" />
     <Compile Include="Scene\LineUtility3D.cs" />
+    <Compile Include="Scene\OutputDrawingSystem.cs" />
     <Compile Include="Scene\RayMarching.cs" />
     <Compile Include="Scene\Scene.cs" />
     <Compile Include="Utilities\MapGeneration\2DPerlinMap.cs" />

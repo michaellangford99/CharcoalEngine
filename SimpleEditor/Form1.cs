@@ -34,6 +34,7 @@ namespace SimpleEditor
             this.Show();
             scene = s;
             UpdateNodes();
+            CameraProperties.SelectedObject = CharcoalEngine.Scene.Camera.Viewport;
         }
 
         private void Add_Click(object sender, EventArgs e)
@@ -92,6 +93,7 @@ namespace SimpleEditor
             CharcoalEngine.Object.Transform root = new CharcoalEngine.Object.Transform();
             root.Children = scene.Root.Children;
             UpdateChildren(root, ObjectsTree.Nodes);
+
         }
         public void UpdateChildren(CharcoalEngine.Object.Transform parent, TreeNodeCollection Nodes)
         {
@@ -105,7 +107,7 @@ namespace SimpleEditor
 
         private void XML_Load_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog d = new System.Windows.Forms.OpenFileDialog();
+            /*System.Windows.Forms.OpenFileDialog d = new System.Windows.Forms.OpenFileDialog();
             d.ValidateNames = true;
             d.CheckFileExists = true;
             d.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
@@ -114,22 +116,22 @@ namespace SimpleEditor
 
             scene.Root.Children.Add(DeSerialize(d.FileName));
 
-            UpdateNodes();
+            UpdateNodes();*/
         }
         private void XML_Save_Click(object sender, EventArgs e)
         {
-            SaveFileDialog d = new SaveFileDialog();
+            /*SaveFileDialog d = new SaveFileDialog();
             d.AddExtension = true;
             d.DefaultExt = ".xml";
             if (d.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
 
-            Serialize(scene.Root.Children[ObjectsTree.SelectedNode.Index], d.FileName);
+            Serialize(scene.Root.Children[ObjectsTree.SelectedNode.Index], d.FileName);*/
         }
 
         public void Serialize(Transform transform, string filename)
         {
-            List<Type> types = new List<Type>();
+           /* List<Type> types = new List<Type>();
             types.Add(transform.GetType());
             Add_To_Type_List(transform, types);
             
@@ -143,9 +145,9 @@ namespace SimpleEditor
             System.Xml.Serialization.XmlSerializer s = new System.Xml.Serialization.XmlSerializer(transform.GetType(), types.ToArray());
             System.IO.StreamWriter sw = new System.IO.StreamWriter(filename);
             s.Serialize(sw.BaseStream, transform);
-            sw.Close();
+            sw.Close();*/
         }
-        public Transform DeSerialize(string filename)
+        /*public Transform DeSerialize(string filename)
         {
             Type[] types = GetTypeList(filename + ".types");
 
@@ -155,9 +157,9 @@ namespace SimpleEditor
             Transform t = (Transform)s.Deserialize(sr.BaseStream);
             sr.Close();
             return t;
-        }
+        }*/
 
-        public void Add_To_Type_List(Transform parent, List<Type> Types)
+        /*public void Add_To_Type_List(Transform parent, List<Type> Types)
         {
             foreach (CharcoalEngine.Object.Transform obj in parent.Children)
             {
@@ -178,17 +180,17 @@ namespace SimpleEditor
                     break;
             }
             return Types.ToArray();
-        }
+        }*/
 
         private void XML_Load_Scene_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog d = new System.Windows.Forms.OpenFileDialog();
+            /*System.Windows.Forms.OpenFileDialog d = new System.Windows.Forms.OpenFileDialog();
             d.ValidateNames = true;
             d.CheckFileExists = true;
             d.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
             if (d.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
-
+                */
             /*StreamReader sr = new StreamReader(d.FileName);
             scene.Root.Children.Clear();
             while(true)
@@ -199,18 +201,18 @@ namespace SimpleEditor
             }
             sr.Close();*/
 
-            scene.Root = DeSerialize(d.FileName);
-
-            UpdateNodes();
+            /*scene.Root = DeSerialize(d.FileName);
+            *
+            UpdateNodes();*/
         }
         private void XML_Save_Scene_Click(object sender, EventArgs e)
         {
             
-            SaveFileDialog d = new SaveFileDialog();
+           /* SaveFileDialog d = new SaveFileDialog();
             d.AddExtension = true;
             d.DefaultExt = ".xml";
             if (d.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
-                return;
+                return;*/
 /*
             StreamWriter sw = new StreamWriter(d.FileName);
             string dir = Get_Directory(d.FileName);
@@ -222,11 +224,11 @@ namespace SimpleEditor
                 n++;
             }
             sw.Close();*/
-            
+            /*
             Serialize(scene.Root, d.FileName);
-
+            */
         }
-
+        /*
         public string Get_Directory(string filename)
         {
              while (true)
@@ -237,7 +239,7 @@ namespace SimpleEditor
             }
             return filename;
         }
-
+        */
         private void Refresh_Click(object sender, EventArgs e)
         {
             UpdateNodes();
@@ -249,6 +251,11 @@ namespace SimpleEditor
             T.Parent.Children.Remove(T);
             T.Parent.Update();
             UpdateNodes();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -33,7 +33,7 @@ namespace SimpleEditor
             this.ObjectsTree = new System.Windows.Forms.TreeView();
             this.List_Remove = new System.Windows.Forms.Button();
             this.Refresh = new System.Windows.Forms.Button();
-            this.AvailableObjectsTree = new System.Windows.Forms.TreeView();
+            this.CameraProperties = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
             // ObjectsProperties
@@ -77,20 +77,22 @@ namespace SimpleEditor
             this.Refresh.UseVisualStyleBackColor = true;
             this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
-            // AvailableObjectsTree
+            // CameraProperties
             // 
-            this.AvailableObjectsTree.Location = new System.Drawing.Point(241, 44);
-            this.AvailableObjectsTree.Margin = new System.Windows.Forms.Padding(4);
-            this.AvailableObjectsTree.Name = "AvailableObjectsTree";
-            this.AvailableObjectsTree.Size = new System.Drawing.Size(190, 200);
-            this.AvailableObjectsTree.TabIndex = 15;
+            this.CameraProperties.HelpVisible = false;
+            this.CameraProperties.Location = new System.Drawing.Point(241, 44);
+            this.CameraProperties.Margin = new System.Windows.Forms.Padding(4);
+            this.CameraProperties.Name = "CameraProperties";
+            this.CameraProperties.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
+            this.CameraProperties.Size = new System.Drawing.Size(320, 200);
+            this.CameraProperties.TabIndex = 15;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(577, 542);
-            this.Controls.Add(this.AvailableObjectsTree);
+            this.Controls.Add(this.CameraProperties);
             this.Controls.Add(this.Refresh);
             this.Controls.Add(this.List_Remove);
             this.Controls.Add(this.ObjectsProperties);
@@ -98,6 +100,7 @@ namespace SimpleEditor
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 
         }
@@ -108,6 +111,6 @@ namespace SimpleEditor
         public System.Windows.Forms.TreeView ObjectsTree;
         private System.Windows.Forms.Button List_Remove;
         private System.Windows.Forms.Button Refresh;
-        public System.Windows.Forms.TreeView AvailableObjectsTree;
+        public System.Windows.Forms.PropertyGrid CameraProperties;
     }
 }

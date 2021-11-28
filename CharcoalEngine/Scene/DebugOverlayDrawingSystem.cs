@@ -22,30 +22,38 @@ using Jitter.LinearMath;
 
 namespace CharcoalEngine.Scene
 {
-    /// <summary>
-    /// This is for objects that are defining their own drawing process while in development or for a specific design reason
-    /// </summary>
-    class CustomFXVertexDrawingSystem : DrawingSystem
+    class DebugOverlayDrawingSystem : DrawingSystem
     {
         RenderTarget2D Output;
 
-        public CustomFXVertexDrawingSystem(Viewport v)
+        public DebugOverlayDrawingSystem(Viewport v, List<Transform> Nodes)
         {
             viewport = v;
 
-            Output = CreateStandardRenderTarget();
+            Output = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
 
             OutputMappings.Add("Output", Output);
+
+            Items = Nodes;
         }
 
         public override void Draw()
         {
-            Engine.g.SetRenderTarget(Output);
+            Engine.g.BlendState = BlendState.AlphaBlend;
+            Engine.g.DepthStencilState = DepthStencilState.Default;
+            Engine.g.SamplerStates[0] = SamplerState.LinearWrap;
+            Engine.graphics.PreferMultiSampling = true;
 
+            Engine.g.SetRenderTarget(Output);
+            
+            SpriteBatch s = new SpriteBatch(Engine.g);
+            s.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.DepthRead);
+
+            s.Draw(InputMappings["Input"].Texture, InputMappings["Input"].Texture.Bounds, Color.White);
             for (int i = 0; i < Items.Count; i++)
-            {
-                Items[i].Draw();
-            }
+                Items[i].DrawDebugMode();
+
+            s.End();
 
             Engine.g.SetRenderTarget(null);
 

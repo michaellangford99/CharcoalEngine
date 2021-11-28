@@ -50,6 +50,8 @@ namespace CharcoalEngine.Scene
 
         public GBufferRenderer(Viewport v)
         {
+            viewport = v;
+
             //effect = Engine.Content.Load<Effect>("Effects/GBuffer");
             effect = Engine.Content.Load<Effect>("Effects/NDT_Effect");
 
@@ -58,15 +60,24 @@ namespace CharcoalEngine.Scene
             DepthMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             LuminanceMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             SpecularMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
+
+            //set outputs
+            OutputMappings.Add("NormalMap", NormalMap);
+            OutputMappings.Add("DiffuseMap", DiffuseMap);
+            OutputMappings.Add("DepthMap", DepthMap);
+            OutputMappings.Add("LuminanceMap", LuminanceMap);
+            OutputMappings.Add("SpecularMap", SpecularMap);
         }
 
         public override void ViewportChanged(Viewport v)
         {
-            NormalMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
+            viewport = v;
+
+            /*NormalMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             DiffuseMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             DepthMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             LuminanceMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
-            SpecularMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
+            SpecularMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);*/
             base.ViewportChanged(v);
         }
 
@@ -82,10 +93,14 @@ namespace CharcoalEngine.Scene
             //set render targets
             //set effect with necessary camera information
 
+            //LOL only draw meshes. what a savage
             foreach (Mesh m in Items)
             {
                 m.GbufferDraw(effect);
             }
+
+            effect.Parameters["NearPlane"].SetValue(viewport.MinDepth);
+            effect.Parameters["FarPlane"].SetValue(viewport.MaxDepth);
 
             //loop through each object handled by this drawing system
             //apply any material information to the effect
@@ -96,15 +111,15 @@ namespace CharcoalEngine.Scene
             //etc..
 
             //render
-
+            NormalMap.Name = "NormalMap";
             Engine.g.SetRenderTargets(null);
 
             //temporary for debugging:
-
+            /*
             SpriteBatch s = new SpriteBatch(Engine.g);
             s.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.DepthRead);
             s.Draw(DiffuseMap, Engine.g.Viewport.Bounds, Color.White);
-            s.End();
+            s.End();*/
 
             base.Draw();
         }

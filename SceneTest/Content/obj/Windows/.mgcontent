@@ -13,6 +13,7 @@
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/ShadowMapEffect.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/SpotLightEffect.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/TextureEffect.fx</File>
+    <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/VaporSim.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/VaporTracing.fx</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Font.spritefont</File>
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Fonts/Font.spritefont</File>
@@ -24,6 +25,7 @@
     <File>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/ModelTextures/smoke.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

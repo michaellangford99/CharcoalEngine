@@ -61,7 +61,6 @@ namespace SceneTest
 
             Engine.StartGameEngine(this, Content, graphics);
             scene = new Scene();
-            CharcoalEngine.Scene.Camera.Initialize_WithDefaults();
             Camera.Position = new Vector3(64, 128, 64);
             Camera.Update();
             /*

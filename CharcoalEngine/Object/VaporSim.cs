@@ -91,6 +91,8 @@ namespace CharcoalEngine.Object
         
         public override void Draw()
         {
+            RenderTargetBinding backup = Engine.g.GetRenderTargets()[0];
+
             Engine.g.SetRenderTargets(DensityMap[DestinationIndex], VelocityMap[DestinationIndex]);
 
             //effect.Parameters["w"].SetValue((float)DensityMap[DestinationIndex].Width);
@@ -107,6 +109,7 @@ namespace CharcoalEngine.Object
             Engine.g.DrawUserPrimitives(PrimitiveType.TriangleList, V, 0, 2);
 
             Engine.g.SetRenderTargets(null);
+            //Engine.g.SetRenderTarget((RenderTarget2D)backup.RenderTarget);
 
             SpriteBatch s = new SpriteBatch(Engine.g);
             s.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.DepthRead);

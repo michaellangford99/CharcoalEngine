@@ -14,6 +14,7 @@ sampler BasicTextureSampler = sampler_state {
 	texture = <BasicTexture>;
 
 };
+float NearPlane = 1;
 float FarPlane = 400;
 
 bool NormalMapEnabled = false;
@@ -48,7 +49,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	output.Position = mul(viewPosition, Projection);
 	output.WorldPosition = worldPosition;
 	output.Normal = input.Normal;
-	output.Depth = output.Position.ww;
+	output.Depth = output.Position.zw;
 	output.UV = input.UV;
 	return output;
 }
@@ -87,7 +88,16 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 	
 	output.Normal = float4(normal, 1);
 	
-	output.Depth = float4(input.Depth.y / FarPlane, 1, 1, 1);
+    //non-linear depth buffer
+    //float depth = ((1 / input.Depth.y) - (1 / NearPlane)) / ((1 / FarPlane) - (1 / NearPlane));
+    
+    //linear depth buffer
+    //float depth = ((input.Depth.x) - (NearPlane)) / ((FarPlane) - (NearPlane));
+    
+    //more fun options
+    float depth = input.Depth.x / input.Depth.y;
+    
+    output.Depth = float4(depth, depth, depth, 1);
 
 	output.Texture = float4(1, 1, 1, Alpha);
 	if (TextureEnabled == true)
