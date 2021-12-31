@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -22,7 +21,6 @@ using Jitter.Dynamics;
 using Jitter.LinearMath;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
-using System.Drawing.Design;
 using System.Windows;
 using System.Design;
 using CharcoalEngine.Object;
@@ -51,7 +49,7 @@ namespace CharcoalEngine.Object
     }
     public class Mesh : Transform
     {
-        [Editor(typeof(CollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(CollectionEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public List<Material> Material_Edit
         {
             get
@@ -66,7 +64,7 @@ namespace CharcoalEngine.Object
             }
         }
 
-        [Editor(typeof(WindowsFormsComponentEditor), typeof(UITypeEditor))]
+        [Editor(typeof(WindowsFormsComponentEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [Browsable(true)]
         public Material Material
         {
@@ -86,7 +84,7 @@ namespace CharcoalEngine.Object
         public List<Normal> Normals = new List<Normal>();
         public List<Face> Faces = new List<Face>();
 
-        public VertexPositionNormalTexture[] V;
+        public VertexPositionNormalTextureTangent[] V;
 
         public void Load(string n)
         {
@@ -103,7 +101,7 @@ namespace CharcoalEngine.Object
         {
             LocalBoundingBox = new BoundingBox();
             //boundingSphere = 
-            V = new VertexPositionNormalTexture[Faces.Count * 3/* * 2 */];
+            V = new VertexPositionNormalTextureTangent[Faces.Count * 3/* * 2 */];
 
             List<Vector3> Points = new List<Vector3>();
 
@@ -125,10 +123,34 @@ namespace CharcoalEngine.Object
                 ///
                 /// Add tangent calculation here based off of gradient of texture coordinates
                 ///
+                
+                Vector3 V0 = Vertices[Faces[i].fv[0].v1 - 1]._Vertex - (AbsolutePosition + WBPosition);
+                Vector3 V1 = Vertices[Faces[i].fv[1].v1 - 1]._Vertex - (AbsolutePosition + WBPosition);
+                Vector3 V2 = Vertices[Faces[i].fv[2].v1 - 1]._Vertex - (AbsolutePosition + WBPosition);
 
-                V[i * 3 + 2] = new VertexPositionNormalTexture(Vertices[Faces[i].fv[0].v1 - 1]._Vertex - (AbsolutePosition + WBPosition), Normals[Faces[i].fv[0].n1 - 1]._Normal, TexCoords[Faces[i].fv[0].t1 - 1]._TexCoord);
-                V[i * 3 + 1] = new VertexPositionNormalTexture(Vertices[Faces[i].fv[1].v1 - 1]._Vertex - (AbsolutePosition + WBPosition), Normals[Faces[i].fv[1].n1 - 1]._Normal, TexCoords[Faces[i].fv[1].t1 - 1]._TexCoord);
-                V[i * 3 + 0] = new VertexPositionNormalTexture(Vertices[Faces[i].fv[2].v1 - 1]._Vertex - (AbsolutePosition + WBPosition), Normals[Faces[i].fv[2].n1 - 1]._Normal, TexCoords[Faces[i].fv[2].t1 - 1]._TexCoord);
+                Vector3 N0 = Normals[Faces[i].fv[0].n1 - 1]._Normal;
+                Vector3 N1 = Normals[Faces[i].fv[1].n1 - 1]._Normal;
+                Vector3 N2 = Normals[Faces[i].fv[2].n1 - 1]._Normal;
+
+                Vector2 UV0 = TexCoords[Faces[i].fv[0].t1 - 1]._TexCoord;
+                Vector2 UV1 = TexCoords[Faces[i].fv[1].t1 - 1]._TexCoord;
+                Vector2 UV2 = TexCoords[Faces[i].fv[2].t1 - 1]._TexCoord;
+
+                // Edges of the triangle : position delta
+                Vector3 deltaPos1 = V1 - V0;
+                Vector3 deltaPos2 = V2 - V0;
+
+                // UV delta
+                Vector2 deltaUV1 = UV1 - UV0;
+                Vector2 deltaUV2 = UV2 - UV0;
+
+                float r = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV1.Y * deltaUV2.X);
+                Vector3 tangent = (deltaPos1 * deltaUV2.Y - deltaPos2 * deltaUV1.Y) * r;
+                Vector3 bitangent = (deltaPos2 * deltaUV1.X - deltaPos1 * deltaUV2.X) * r;
+
+                V[i * 3 + 2] = new VertexPositionNormalTextureTangent(V0, N0, UV0, tangent);
+                V[i * 3 + 1] = new VertexPositionNormalTextureTangent(V1, N1, UV1, tangent);
+                V[i * 3 + 0] = new VertexPositionNormalTextureTangent(V2, N2, UV2, tangent);
 
             }
             //Parent.Position = Position;
@@ -166,6 +188,8 @@ namespace CharcoalEngine.Object
                         e.Parameters["DiffuseColor"].SetValue(Material.DiffuseColor);
                         e.Parameters["Alpha"].SetValue(Material.Alpha);
                         e.Parameters["AlphaEnabled"].SetValue(Material.AlphaEnabled);
+                        e.Parameters["AlphaMaskEnabled"].SetValue(Material.AlphaMaskEnabled);
+                        e.Parameters["AlphaMask"].SetValue(Material.AlphaMask);
 
                         //...
                         e.CurrentTechnique.Passes[0].Apply();
@@ -175,6 +199,50 @@ namespace CharcoalEngine.Object
                 }
             }
         }
+    }
+    // vertex structure data.  
+    // i generate the binormal on the shader when i use custom vertexs
+    // so maybe you could make it and match it up to that function.
+    public struct VertexPositionNormalTextureTangent : IVertexType
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector2 TextureCoordinate;
+        public Vector3 Tangent;
+
+        public VertexPositionNormalTextureTangent(Vector3 _Position, Vector3 _Normal, Vector2 _TextureCoordinate, Vector3 _Tangent)
+        {
+            Position = _Position;
+            Normal = _Normal;
+            TextureCoordinate = _TextureCoordinate;
+            Tangent = _Tangent;
+        }
+
+        public static VertexDeclaration VertexDeclaration = new VertexDeclaration
+        (
+              new VertexElement(VertexElementByteOffset.PositionStartOffset(), VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+              new VertexElement(VertexElementByteOffset.OffsetVector3(), VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+              new VertexElement(VertexElementByteOffset.OffsetVector2(), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+              new VertexElement(VertexElementByteOffset.OffsetVector3(), VertexElementFormat.Vector3, VertexElementUsage.Normal, 1)
+        );
+        VertexDeclaration IVertexType.VertexDeclaration { get { return VertexDeclaration; } }
+    }
+    public struct VertexElementByteOffset
+    {
+        public static int currentByteSize = 0;
+        [STAThread]
+        public static int PositionStartOffset() { currentByteSize = 0; var s = sizeof(float) * 3; currentByteSize += s; return currentByteSize - s; }
+        public static int Offset(float n) { var s = sizeof(float); currentByteSize += s; return currentByteSize - s; }
+        public static int Offset(Vector2 n) { var s = sizeof(float) * 2; currentByteSize += s; return currentByteSize - s; }
+        public static int Offset(Color n) { var s = sizeof(int); currentByteSize += s; return currentByteSize - s; }
+        public static int Offset(Vector3 n) { var s = sizeof(float) * 3; currentByteSize += s; return currentByteSize - s; }
+        public static int Offset(Vector4 n) { var s = sizeof(float) * 4; currentByteSize += s; return currentByteSize - s; }
+
+        public static int OffsetFloat() { var s = sizeof(float); currentByteSize += s; return currentByteSize - s; }
+        public static int OffsetColor() { var s = sizeof(int); currentByteSize += s; return currentByteSize - s; }
+        public static int OffsetVector2() { var s = sizeof(float) * 2; currentByteSize += s; return currentByteSize - s; }
+        public static int OffsetVector3() { var s = sizeof(float) * 3; currentByteSize += s; return currentByteSize - s; }
+        public static int OffsetVector4() { var s = sizeof(float) * 4; currentByteSize += s; return currentByteSize - s; }
     }
     public struct Vertex
     {

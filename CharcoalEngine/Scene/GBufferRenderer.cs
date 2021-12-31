@@ -43,6 +43,7 @@ namespace CharcoalEngine.Scene
         // i think world space position can be recovered from depth, camera position, scene near and far clip, and screen space position (and at higher precision)
 
         RenderTarget2D NormalMap;
+        //RenderTarget2D TangentMap;
         RenderTarget2D DiffuseMap;
         RenderTarget2D DepthMap;
         RenderTarget2D LuminanceMap;

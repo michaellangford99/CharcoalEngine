@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <SourceFile>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/Effects/NDT_Effect.fx</SourceFile>
-  <SourceTime>2021-11-27T22:49:39.3838677-05:00</SourceTime>
+  <SourceTime>2021-12-29T16:36:35.8568337-05:00</SourceTime>
   <DestFile>C:/Users/Michael/OneDrive - purdue.edu/DontAskQuestions/CharcoalEngine_Monogame/SceneTest/Content/bin/Windows/Content/Effects/NDT_Effect.xnb</DestFile>
-  <DestTime>2021-11-27T22:49:48.2774901-05:00</DestTime>
+  <DestTime>2021-12-29T16:36:40.0339952-05:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2018-09-23T17:55:52-04:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

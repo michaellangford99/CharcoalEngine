@@ -37,7 +37,7 @@ namespace CharcoalEngine.Scene
 
             OutputMappings.Add("Output", Output);
 
-            effect = Engine.Content.Load<Effect>("Effects/DirectionalLight");
+            effect = Engine.Content.Load<Effect>("Effects/PointLightEffect");
             V = new VertexPositionColor[6];
 
             Random r = new Random();
@@ -56,7 +56,6 @@ namespace CharcoalEngine.Scene
 
             effect.Parameters["w"].SetValue((float)Camera.Viewport.Width);
             effect.Parameters["h"].SetValue((float)Camera.Viewport.Height);
-            effect.Parameters["Position"].SetValue(Vector3.Zero);
             effect.Parameters["ViewProjection"].SetValue(Camera.View * Camera.Projection);
             effect.Parameters["InverseViewProjection"].SetValue(Matrix.Invert(Camera.View * Camera.Projection));
             effect.Parameters["InverseView"].SetValue(Matrix.Invert(Camera.View));
@@ -65,11 +64,10 @@ namespace CharcoalEngine.Scene
             effect.Parameters["FarClip"].SetValue(Camera.Viewport.MaxDepth);
             effect.Parameters["CameraPosition"].SetValue(Camera.Position);
 
-            //effect.Parameters["NormalMap"].SetValue(InputMappings["Normal"].Texture);
+            effect.Parameters["NormalMap"].SetValue(InputMappings["Normal"].Texture);
             effect.Parameters["DepthMap"].SetValue(InputMappings["Depth"].Texture);
-                //effect.Parameters["Diffuse"].SetValue(InputMappings["Diffuse"].Texture);
+            effect.Parameters["DiffuseMap"].SetValue(InputMappings["Diffuse"].Texture);
             
-
             effect.CurrentTechnique.Passes[0].Apply();
 
             Engine.g.DrawUserPrimitives(PrimitiveType.TriangleList, V, 0, 2);

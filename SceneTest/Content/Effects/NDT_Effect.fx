@@ -4,7 +4,7 @@ float4x4 Projection;
 
 float3 DiffuseColor;
 float Alpha = 1.0;
-bool AlphaEnabled = false;
+bool AlphaEnabled = true;
 bool TextureEnabled;
 
 bool LightingEnabled = true;
@@ -24,11 +24,19 @@ sampler NormalMapSampler = sampler_state {
 
 };
 
+bool AlphaMaskEnabled = false;
+texture AlphaMask;
+sampler AlphaMaskSampler = sampler_state
+{
+    texture = <AlphaMask>;
+
+};
 
 struct VertexShaderInput
 {
 	float4 Position : POSITION0;
 	float3 Normal : NORMAL0;
+    float3 Tangent : NORMAL1;
 	float2 UV : TEXCOORD0;
 };
 
@@ -39,6 +47,7 @@ struct VertexShaderOutput
 	float4 WorldPosition : TEXCOORD2;
 	float2 Depth : TEXCOORD3;
 	float2 UV : TEXCOORD4;
+    float3 Tangent : TEXCOORD5;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -48,7 +57,8 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 	float4 viewPosition = mul(worldPosition, View);
 	output.Position = mul(viewPosition, Projection);
 	output.WorldPosition = worldPosition;
-	output.Normal = input.Normal;
+    output.Normal = mul(input.Normal, World);
+    output.Tangent = mul(input.Tangent, World);
 	output.Depth = output.Position.zw;
 	output.UV = input.UV;
 	return output;
@@ -59,34 +69,42 @@ struct PixelShaderOutput
 	float4 Normal : COLOR0;  
 	float4 Depth : COLOR1; 
 	float4 Texture : COLOR2;
+    float4 Tangent : COLOR3;
 };
 
 PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
-	
+    
+    float3 tangent = input.Tangent;
+    tangent = normalize(tangent);
+    
+    float3 normal = input.Normal;
+    normal = normalize(normal);
+    
+    float3 binormal = normalize(cross(tangent, normal));
+    
+    float3x3 TBN = float3x3(tangent, normal, binormal);
+    
+    normal = float3(0, 1, 0);
+    
 	if (NormalMapEnabled)
 	{
-		float3 normal = input.Normal;
-		float3 tangent = float3(1, 0, 0);
-		float3 binormal = cross(input.Normal, tangent);
-		tangent = cross(normal, binormal);
 		float3 normalMap = tex2D(NormalMapSampler, input.UV).xyz;
 		normalMap = normalMap * 2 - 1;
-		
-		normalMap = half3(normal * normalMap.z + normalMap.x * tangent - normalMap.y * binormal);
+        normal = normalize(normalMap).xzy;
+    }
 
-		input.Normal = normalMap;
-	}
-
-	input.Normal = mul(input.Normal, World);
-	float3 normal = normalize(input.Normal);
-	normal /= 2;
-	normal += 0.5;
-
-	
-	
-	output.Normal = float4(normal, 1);
+    output.Texture = float4(0, 0, 0, 0);
+    
+    normal = mul(normal, TBN).xyz;
+    
+    tangent /= 2;
+    tangent += 0.5;    
+    normal /= 2;
+    normal += 0.5;
+    output.Tangent = float4(tangent, 1);	
+    output.Normal = float4(normal, 1);
 	
     //non-linear depth buffer
     //float depth = ((1 / input.Depth.y) - (1 / NearPlane)) / ((1 / FarPlane) - (1 / NearPlane));
@@ -119,7 +137,7 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 
 	if (TextureEnabled == true)
 	{
-		if (tex2D(BasicTextureSampler, input.UV).a == 0)
+        if (output.Texture.a <= 0.001)
 		{
 			if (AlphaEnabled)
 			{
@@ -141,8 +159,12 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 			discard;
 		}
 	}
+    
+    if (AlphaMaskEnabled)
+        if (tex2D(AlphaMaskSampler, input.UV).r < 0.5)
+            discard;
 	
-	return output;
+    return output;
 }
 
 technique Technique1

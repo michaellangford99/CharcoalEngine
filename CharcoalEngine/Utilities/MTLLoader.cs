@@ -73,6 +73,16 @@ namespace CharcoalEngine.Utilities
                     if (Materials[Materials.Count - 1].Texture == null)
                         Materials[Materials.Count - 1].TextureEnabled = false;
                 }
+                if (line.StartsWith("map_d "))
+                {
+                    Materials[Materials.Count - 1].AlphaMaskEnabled = true;
+
+                    string texturename = LocalFolder + line.Remove(0, 6);
+                    Materials[Materials.Count - 1].AlphaMask = TextureImporter.LoadTextureFromFile(texturename);
+                    Materials[Materials.Count - 1].AlphaMaskFileName = texturename;
+                    if (Materials[Materials.Count - 1].AlphaMask == null)
+                        Materials[Materials.Count - 1].AlphaMaskEnabled = false;
+                }
                 if (line.StartsWith("map_bump "))
                 {
                     Materials[Materials.Count - 1].NormalMapEnabled = true;

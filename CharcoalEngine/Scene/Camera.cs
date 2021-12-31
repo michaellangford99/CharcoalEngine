@@ -48,7 +48,7 @@ namespace CharcoalEngine.Scene
 
             Viewport = Engine.g.Viewport;
             Viewport.MinDepth = 0.5f;
-            Viewport.MaxDepth = 10;
+            Viewport.MaxDepth = 1000;
             Viewport.Width = 1920;//Engine.g.Viewport.Width;
             Viewport.Height = 1080;//Engine.g.Viewport.Height;
             Position = new Vector3(0, 2, 6);

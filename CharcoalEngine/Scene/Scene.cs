@@ -36,6 +36,8 @@ namespace CharcoalEngine.Scene
 
         GizmoComponent _gizmo;
 
+        OutputDrawingSystem output;
+
         public Scene()
         {
             //Engine.Game.Window.AllowUserResizing = true;
@@ -86,7 +88,7 @@ namespace CharcoalEngine.Scene
             gbds.InputMappings.Add("Depth", new InputMapping(gb, "DepthMap"));
             DrawingSystems.Add(gbds);
 
-            OutputDrawingSystem output = new OutputDrawingSystem();
+            output = new OutputDrawingSystem();
             DrawingSystems.Add(output);
             output.InputMappings.Add("NormalMap", new InputMapping(gb, "NormalMap"));
             output.InputMappings.Add("DiffuseMap", new InputMapping(gb, "DiffuseMap"));
@@ -162,10 +164,12 @@ namespace CharcoalEngine.Scene
             if (IsNewButtonPress(Keys.I))
                 _gizmo.SnapEnabled = !_gizmo.SnapEnabled;
             
-
             // clear selection
             if (IsNewButtonPress(Keys.Escape))
                 _gizmo.Clear();
+
+            if (IsNewButtonPress(Keys.Q)) output.ActiveInput++;
+            if (IsNewButtonPress(Keys.W)) output.ActiveInput--;
 
             _gizmo.Update(gameTime);
 

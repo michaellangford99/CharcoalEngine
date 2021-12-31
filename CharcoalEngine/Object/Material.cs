@@ -113,6 +113,43 @@ namespace CharcoalEngine.Object
         }
         public float Alpha = 1;
 
+
+
+
+
+
+        public string AlphaMaskFileName;
+
+        [BrowsableAttribute(true)]
+        [EditorAttribute(typeof(System.Windows.Forms.Design.FileNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public string _AlphaMask
+        {
+            get { return AlphaMaskFileName; }
+            set
+            {
+                AlphaMaskEnabled = true;
+                AlphaMask = TextureImporter.LoadTextureFromFile(value);
+                if (AlphaMask == null)
+                    AlphaMaskEnabled = false;
+                AlphaMaskFileName = value;
+            }
+        }
+
+        public Texture2D AlphaMask;
+
+        public bool _AlphaMaskEnabled
+        {
+            get { return AlphaMaskEnabled; }
+            set { AlphaMaskEnabled = value; }
+        }
+        public bool AlphaMaskEnabled = false;
+
+
+
+
+
+
+
         //public Texture2D SpecularMap;
         //public bool SpecularMapEnabled = false;
         //public Texture2D BumpMap { get; set; }
@@ -140,6 +177,8 @@ namespace CharcoalEngine.Object
             mat.AlphaEnabled = AlphaEnabled;
             mat.NormalMap = NormalMap;
             mat.NormalMapEnabled = NormalMapEnabled;
+            mat.AlphaMask = AlphaMask;
+            mat.AlphaMaskEnabled = AlphaMaskEnabled;
 
             return mat;
         }

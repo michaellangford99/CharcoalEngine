@@ -158,7 +158,7 @@ namespace CharcoalEngine.Object
                 InvalidateBBox();
             }
         }
-        public BoundingBox __localboundingbox__ = new BoundingBox(-Vector3.One, Vector3.One);
+        public BoundingBox __localboundingbox__ = new BoundingBox(-Vector3.One/4, Vector3.One/4);
 
         public BoundingBox AbsoluteBoundingBox
         {
