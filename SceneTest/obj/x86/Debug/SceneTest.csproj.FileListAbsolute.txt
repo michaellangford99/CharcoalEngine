@@ -138,3 +138,5 @@ C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\
 C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\SceneTest\obj\x86\Debug\SceneTest.exe
 C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\SceneTest\obj\x86\Debug\SceneTest.pdb
 C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\SceneTest\bin\Windows\x86\Debug\Content\Effects\DirectionalLight.xnb
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\SceneTest\bin\Windows\x86\Debug\Content\Effects\SSAOEffect.xnb
+C:\Users\Michael\OneDrive - purdue.edu\DontAskQuestions\CharcoalEngine_Monogame\SceneTest\bin\Windows\x86\Debug\Content\Effects\SSReflectionEffect.xnb

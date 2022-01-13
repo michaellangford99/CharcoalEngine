@@ -26,100 +26,114 @@ namespace CharcoalEngine.Scene
     public class Scene
     {
         public Transform Root = new Transform();
-
-        public List<DrawingSystem> DrawingSystems = new List<DrawingSystem>();
-
-
-
+        
         GraphicsDevice g;
         SpriteBatch spriteBatch;
 
         GizmoComponent _gizmo;
 
         OutputDrawingSystem output;
+        PointLightRenderer point_light_renderer;
+        SSAORenderer ssao_renderer;
+        SSReflectionRenderer ssreflection_renderer;
+
+        Effect gbuffereffect;
+
+        //render targets for the GBuffer
+        //world normal
+        //luminance
+        //specular power
+        //specular intnesity
+        //ambient color
+        //depth
+        // i think world space position can be recovered from depth, camera position, scene near and far clip, and screen space position (and at higher precision)
+
+        RenderTarget2D NormalMap;
+        //RenderTarget2D TangentMap;
+        RenderTarget2D DiffuseMap;
+        RenderTarget2D DepthMap;
+        RenderTarget2D LuminanceMap;
+        RenderTarget2D SpecularMap;
 
         public Scene()
         {
-            //Engine.Game.Window.AllowUserResizing = true;
+            Engine.Game.Window.AllowUserResizing = true;
             Engine.Game.IsMouseVisible = true;
 
             g = Engine.g;
             spriteBatch = new SpriteBatch(g);
-
-            Engine.Game.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
-
-            Camera.Initialize_WithDefaults();
-
-            _gizmo = new GizmoComponent(g, spriteBatch, Engine.Content.Load<SpriteFont>("Fonts/Font"));
-            _gizmo.SetSelectionPool(Root.Children, Root);
-
-            //_gizmo.TranslateEvent += _gizmo_TranslateEvent;
-            _gizmo.RotateEvent += _gizmo_RotateEvent;
-            //_gizmo.ScaleEvent += _gizmo_ScaleEvent;
-
-
-            Root.Update();
-            /*DrawingSystems.Add(new RayMarching());
-
-
-            Root.Children.Add(new Sphere());     
-            ((RayMarching)DrawingSystems[0]).RegisterItem(Root.Children[0]);
-            Root.Children.Add(new Sphere());
-            ((RayMarching)DrawingSystems[0]).RegisterItem(Root.Children[1]);*/
-
-            // DrawingSystems.Add(new CustomFXVertexDrawingSystem());
-            // Root.Children.Add(new RayTracing());
-            //Root.Children.Add(new VaporSim2D(1000, 1000/*g.Viewport.Height, g.Viewport.Height*/));
-            //Root.Children.Add(new VaporTracing());
-            // DrawingSystems[0].RegisterItem(Root.Children[0]);
             
-            GBufferRenderer gb = new GBufferRenderer(Camera.Viewport);
-            DrawingSystems.Add(gb);
-
-            /*CustomFXVertexDrawingSystem custom = new CustomFXVertexDrawingSystem(Camera.Viewport);
-            DrawingSystems.Add(custom);
-
-            Root.Children.Add(new VaporTracing());
-            custom.RegisterItem(Root.Children[0]);*/
+            init_camera();
+            init_gizmo();
+            init_gbuffer();
+            init_output();
             
-            GBufferReliantDrawingSystem gbds = new GBufferReliantDrawingSystem(Camera.Viewport);
-            gbds.InputMappings.Add("Normal", new InputMapping(gb, "NormalMap"));
-            gbds.InputMappings.Add("Diffuse", new InputMapping(gb, "DiffuseMap"));
-            gbds.InputMappings.Add("Depth", new InputMapping(gb, "DepthMap"));
-            DrawingSystems.Add(gbds);
-
-            output = new OutputDrawingSystem();
-            DrawingSystems.Add(output);
-            output.InputMappings.Add("NormalMap", new InputMapping(gb, "NormalMap"));
-            output.InputMappings.Add("DiffuseMap", new InputMapping(gb, "DiffuseMap"));
-            output.InputMappings.Add("DepthMap", new InputMapping(gb, "DepthMap"));
-            output.InputMappings.Add("Vapor", new InputMapping(gbds, "Output"));
-
-            OBJModel obj = new OBJModel(UserUtilities.OpenFile(UserUtilities.OBJ_FILTER), gb, Vector3.Zero, Vector3.Zero, 1.0f, false);
+            OBJModel obj = new OBJModel(UserUtilities.OpenFile(UserUtilities.OBJ_FILTER), Vector3.Zero, Vector3.Zero, 1.0f, false);
             Root.Children.Add(obj);
             Root.Update();
+
+            Random r = new Random();
+            
+            for (int i = 0; i < 10; i++)
+            {
+                addlight(new Color(new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble())), new Vector3(-5 + i, 0, 3));
+            }
+        }
+
+        public void addlight(Color c, Vector3 p)
+        {
+            PointLight p1 = new PointLight() { Position = p, Color = c.ToVector3() };
+            Root.Children.Add(p1);
+            point_light_renderer.lights.Add(p1);
+        }
+
+        public void init_output()
+        {
+            output = new OutputDrawingSystem();
+            output.Inputs.Add(NormalMap);
+            output.Inputs.Add(DiffuseMap);
+            output.Inputs.Add(DepthMap);
+            //output.Inputs.Add(LuminanceMap);
+            //output.Inputs.Add(SpecularMap);
+
+            point_light_renderer = new PointLightRenderer(Camera.Viewport);
+            output.Inputs.Add(point_light_renderer.Output);
+
+            ssao_renderer = new SSAORenderer(Camera.Viewport);
+            output.Inputs.Add(ssao_renderer.Output);
+
+            ssreflection_renderer = new SSReflectionRenderer(Camera.Viewport);
+            output.Inputs.Add(ssreflection_renderer.Output);
+        }
+
+        public void init_camera()
+        {
+            Camera.Initialize_WithDefaults();
+        }
+
+        public void init_gizmo()
+        {
+            _gizmo = new GizmoComponent(g, spriteBatch, Engine.Content.Load<SpriteFont>("Fonts/Font"));
+            _gizmo.SetSelectionPool(Root.Children, Root);
+            _gizmo.RotateEvent += _gizmo_RotateEvent;
+        }
+
+        public void init_gbuffer()
+        {
+            gbuffereffect = Engine.Content.Load<Effect>("Effects/NDT_Effect");
+
+            NormalMap = new RenderTarget2D(Engine.g, Camera.Viewport.Width, Camera.Viewport.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
+            DiffuseMap = new RenderTarget2D(Engine.g, Camera.Viewport.Width, Camera.Viewport.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
+            DepthMap = new RenderTarget2D(Engine.g, Camera.Viewport.Width, Camera.Viewport.Height, false, SurfaceFormat.Single, DepthFormat.Depth24);
+            LuminanceMap = new RenderTarget2D(Engine.g, Camera.Viewport.Width, Camera.Viewport.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
+            SpecularMap = new RenderTarget2D(Engine.g, Camera.Viewport.Width, Camera.Viewport.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
         }
 
         private void _gizmo_RotateEvent(Transform transformable, TransformationEventArgs e, TransformationEventArgs d)
         {
             _gizmo.RotationHelper(transformable, e, d);
         }
-
-        /// <summary>
-        /// not used yet
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Window_ClientSizeChanged(object sender, EventArgs e)
-        {
-            //Camera.Viewport.Bounds = g.PresentationParameters.Bounds;
-            //notify all draw systems of window size change
-            /*for (int i = 0; i < DrawingSystems.Count; i++)
-            {
-                DrawingSystems[i].ViewportChanged(Camera.Viewport);
-            }*/
-        }
-
+        
         private KeyboardState _previousKeys;
         private MouseState _previousMouse;
         private MouseState _currentMouse;
@@ -186,76 +200,101 @@ namespace CharcoalEngine.Scene
 
         public void Draw()
         {
-            #region setup
-            g.BlendState = BlendState.AlphaBlend;
-            g.DepthStencilState = DepthStencilState.Default;
-            g.SamplerStates[0] = SamplerState.LinearWrap;
+            draw_gbuffer();
+            draw_point_lights();
+            draw_ssao();
+            draw_ssreflection();
+            draw_outputs();
+            draw_debug();
+            draw_gizmo();
+        }
+
+        public void draw_gbuffer_mesh(Mesh m)
+        {
+            gbuffereffect.Parameters["World"].SetValue(m.AbsoluteWorld);
+            gbuffereffect.Parameters["View"].SetValue(Camera.View);
+            gbuffereffect.Parameters["Projection"].SetValue(Camera.Projection);
+            gbuffereffect.Parameters["BasicTexture"].SetValue(m.Material.Texture);
+            gbuffereffect.Parameters["TextureEnabled"].SetValue(m.Material._TextureEnabled);
+            gbuffereffect.Parameters["NormalMap"].SetValue(m.Material.NormalMap);
+            gbuffereffect.Parameters["NormalMapEnabled"].SetValue(m.Material.NormalMapEnabled);
+            gbuffereffect.Parameters["DiffuseColor"].SetValue(m.Material.DiffuseColor);
+            gbuffereffect.Parameters["Alpha"].SetValue(m.Material.Alpha);
+            gbuffereffect.Parameters["AlphaEnabled"].SetValue(m.Material.AlphaEnabled);
+            gbuffereffect.Parameters["AlphaMaskEnabled"].SetValue(m.Material.AlphaMaskEnabled);
+            gbuffereffect.Parameters["AlphaMask"].SetValue(m.Material.AlphaMask);
+
+            //...
+            gbuffereffect.CurrentTechnique.Passes[0].Apply();
+            gbuffereffect.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
+            Engine.g.DrawUserPrimitives(PrimitiveType.TriangleList, m.V, 0, m.Faces.Count);
+        }
+
+        public void draw_gbuffer_recursive(Transform t)
+        {
+            if (t is Mesh)
+                ((Mesh)t).GbufferDraw(gbuffereffect);
+            foreach (Transform m in t.Children)
+            {
+                draw_gbuffer_recursive(m);
+            }
+        }
+
+        public void draw_gbuffer()
+        {
+            Engine.g.BlendState = BlendState.AlphaBlend;
+            Engine.g.DepthStencilState = DepthStencilState.Default;
+            Engine.g.SamplerStates[0] = SamplerState.LinearWrap;
             Engine.graphics.PreferMultiSampling = true;
-            //g.DepthStencilState = DepthStencilState.Default;
-            //RasterizerState r = new RasterizerState();
-            //r.MultiSampleAntiAlias = true;
-            //g.RasterizerState = r;
 
-            #endregion
+            Engine.g.SetRenderTargets(NormalMap, DepthMap, DiffuseMap/*, LuminanceMap, SpecularMap*/);
 
-            //Set the active scene:
-            Engine.ActiveScene = this;
+            //set render targets
+            //set effect with necessary camera information
 
-            g.Clear(Color.Black);
-
-            /*for (int i = 0; i < Root.Children.Count; i++)
-            {
-                Root.Children[i].Draw();
-            }*/
-
-            //go through and draw each system and at each system, draw its dependants. if those have dependants, draw them.
-            //if the system already has output, then dont redraw it, but route its outputs to the necessary inputs
-            //each system aught to have a hash id
-            //then a system can have a list of those that it depends on (their ids)
-            //dont do indexes because if they get rearranged it'll get all screwed up
-            //or give them instance numbers.
+            //LOL only draw meshes. what a savage
+            draw_gbuffer_recursive(Root);
             
-            //each system has a list of its dependants
-            //and for each dependant the names of the texture that it needs
-            //every system has a list of its output textures along with their names
-            //texture set input, textureset output, mapping from inputs to outpus entitling the hash and name of input texture
+            gbuffereffect.Parameters["NearPlane"].SetValue(Camera.Viewport.MinDepth);
+            gbuffereffect.Parameters["FarPlane"].SetValue(Camera.Viewport.MaxDepth);
 
-            ///
-            ///input_mapping {
-            ///string drawing_system_input_hashcode;
-            ///string texture_input_name;
-            ///}
-            ///
-            /// list<input_mapping> inputs
-            /// 
-            /// texture_set {
-            /// string name;
-            /// RenderTarget2D texture;
-            /// 
-            /// internal get set operations for getting setting by name
-            /// 
-            /// of course, perform get/set as few times as possible and retain target in local variable
-            /// 
-            /// }
-            ///
+            //loop through each object handled by this drawing system
+            //apply any material information to the effect
+            //normal maps
+            //height maps (parallax mapping)
+            //specular maps
+            //texture maps
+            //etc..
+            Engine.g.SetRenderTargets(null);
+        }
 
-            //idk
+        public void draw_point_lights()
+        {
+            point_light_renderer.Draw(NormalMap, DepthMap, DiffuseMap);
+        }
 
-            for (int i = 0; i < DrawingSystems.Count; i++)
-            {
-                //reset flag keeping track of wether a dependant system already forced a draw
-                DrawingSystems[i].ResetForDraw();
-            }
+        public void draw_ssao()
+        {
+            ssao_renderer.Draw(NormalMap, DepthMap, DiffuseMap);
+        }
 
-            for (int i = 0; i < DrawingSystems.Count; i++)
-            {
-                if (DrawingSystems[i].NeedsDrawn())
-                {
-                    DrawingSystems[i].DrawDependencies();
-                    DrawingSystems[i].Draw();
-                }
-            }
+        public void draw_ssreflection()
+        {
+            ssreflection_renderer.Draw(NormalMap, DepthMap, DiffuseMap);
+        }
 
+        public void draw_outputs()
+        {
+            output.Draw();
+        }
+
+        public void draw_debug()
+        {
+            Root.DrawDebugMode();
+        }
+
+        public void draw_gizmo()
+        {
             #region setup
             g.BlendState = BlendState.Opaque;
             g.DepthStencilState = DepthStencilState.Default;
@@ -264,9 +303,6 @@ namespace CharcoalEngine.Scene
             #endregion
 
             _gizmo.Draw();
-            //Root.DrawDebugMode();
         }
-
-        List<Transform> transforms = new List<Transform>();
     }
 }

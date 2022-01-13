@@ -63,14 +63,14 @@ namespace CharcoalEngine.Scene
             SpecularMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
 
             //set outputs
-            OutputMappings.Add("NormalMap", NormalMap);
+            /*OutputMappings.Add("NormalMap", NormalMap);
             OutputMappings.Add("DiffuseMap", DiffuseMap);
             OutputMappings.Add("DepthMap", DepthMap);
             OutputMappings.Add("LuminanceMap", LuminanceMap);
-            OutputMappings.Add("SpecularMap", SpecularMap);
+            OutputMappings.Add("SpecularMap", SpecularMap);*/
         }
 
-        public override void ViewportChanged(Viewport v)
+        public void ViewportChanged(Viewport v)
         {
             viewport = v;
 
@@ -79,10 +79,10 @@ namespace CharcoalEngine.Scene
             DepthMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             LuminanceMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
             SpecularMap = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);*/
-            base.ViewportChanged(v);
+            //base.ViewportChanged(v);
         }
 
-        public override void Draw()
+        public void Draw()
         {
             Engine.g.BlendState = BlendState.AlphaBlend;
             Engine.g.DepthStencilState = DepthStencilState.Default;
@@ -95,10 +95,10 @@ namespace CharcoalEngine.Scene
             //set effect with necessary camera information
 
             //LOL only draw meshes. what a savage
-            foreach (Mesh m in Items)
+            /*foreach (Mesh m in Items)
             {
                 m.GbufferDraw(effect);
-            }
+            }*/
 
             effect.Parameters["NearPlane"].SetValue(viewport.MinDepth);
             effect.Parameters["FarPlane"].SetValue(viewport.MaxDepth);
@@ -121,8 +121,6 @@ namespace CharcoalEngine.Scene
             s.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.DepthRead);
             s.Draw(DiffuseMap, Engine.g.Viewport.Bounds, Color.White);
             s.End();*/
-
-            base.Draw();
         }
     }
 }

@@ -73,6 +73,18 @@
 /processorParam:DebugMode=Debug
 /build:Effects/SpotLightEffect.fx
 
+#begin Effects/SSAOEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/SSAOEffect.fx
+
+#begin Effects/SSReflectionEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/SSReflectionEffect.fx
+
 #begin Effects/TextureEffect.fx
 /importer:EffectImporter
 /processor:EffectProcessor

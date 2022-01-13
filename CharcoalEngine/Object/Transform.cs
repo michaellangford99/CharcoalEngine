@@ -368,7 +368,7 @@ namespace CharcoalEngine.Object
             {
                 LineUtility3D.Draw3DLine(Engine.g, Camera.View, Camera.Projection, Microsoft.Xna.Framework.Color.White, AbsolutePosition, AbsolutePosition + Vector3.Right * 0.5f);
                 LineUtility3D.Draw3DLine(Engine.g, Camera.View, Camera.Projection, Microsoft.Xna.Framework.Color.White, AbsolutePosition, AbsolutePosition + Vector3.Up * 0.5f);
-                LineUtility3D.Draw3DLine(Engine.g, Camera.View, Camera.Projection, Microsoft.Xna.Framework.Color.White, AbsolutePosition, AbsolutePosition + Vector3.Forward * 0.5f);
+                LineUtility3D.Draw3DLine(Engine.g, Camera.View, Camera.Projection, Microsoft.Xna.Framework.Color.White, AbsolutePosition, AbsolutePosition + Vector3.Backward * 0.5f);
             }
             for (int i = 0; i < Children.Count; i++)
             {

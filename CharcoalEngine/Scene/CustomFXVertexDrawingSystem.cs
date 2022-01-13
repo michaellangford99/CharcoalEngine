@@ -34,22 +34,13 @@ namespace CharcoalEngine.Scene
             viewport = v;
 
             Output = CreateStandardRenderTarget();
-
-            OutputMappings.Add("Output", Output);
         }
 
-        public override void Draw()
+        public void Draw()
         {
             Engine.g.SetRenderTarget(Output);
-
-            for (int i = 0; i < Items.Count; i++)
-            {
-                Items[i].Draw();
-            }
-
+            
             Engine.g.SetRenderTarget(null);
-
-            base.Draw();
         }
     }
 }

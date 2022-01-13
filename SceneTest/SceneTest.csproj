@@ -67,10 +67,13 @@
   <ItemGroup>
     <Content Include="arrow.png" />
     <Content Include="Content\Control Textures\arrow.png" />
+    <Content Include="Content\Effects\EdgeDetectionSketchEffect.fx" />
     <Content Include="Content\Effects\NDT_Effect.fx" />
     <Content Include="Content\Effects\NormalPixelMapEffect.fx" />
     <Content Include="Content\Effects\PointLightEffect.fx" />
     <Content Include="Content\Effects\DirectionalLight.fx" />
+    <Content Include="Content\Effects\SSReflectionEffect.fx" />
+    <Content Include="Content\Effects\SSAOEffect.fx" />
     <Content Include="Content\Effects\VaporSim.fx" />
     <Content Include="Content\Effects\VaporTracing.fx" />
     <Content Include="Content\Effects\ShadowMapEffect.fx" />

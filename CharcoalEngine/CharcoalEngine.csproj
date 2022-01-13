@@ -59,6 +59,7 @@
     <Compile Include="Editing\Geometry.cs" />
     <Compile Include="Editing\GizmoComponent.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Object\Light.cs" />
     <Compile Include="Object\Material.cs" />
     <Compile Include="Object\OBJModel.cs" />
     <Compile Include="Object\RayMarchedObject.cs" />
@@ -72,7 +73,9 @@
     <Compile Include="Scene\DebugOverlayDrawingSystem.cs" />
     <Compile Include="Scene\CustomFXVertexDrawingSystem.cs" />
     <Compile Include="Scene\DrawingSystem.cs" />
-    <Compile Include="Scene\GBufferReliantDrawingSystem.cs" />
+    <Compile Include="Scene\SSReflectionRenderer.cs" />
+    <Compile Include="Scene\SSAORenderer.cs" />
+    <Compile Include="Scene\PointLightRenderer.cs" />
     <Compile Include="Scene\GBufferRenderer.cs" />
     <Compile Include="Scene\LineUtility3D.cs" />
     <Compile Include="Scene\OutputDrawingSystem.cs" />

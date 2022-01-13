@@ -23,21 +23,19 @@ using Jitter.LinearMath;
 namespace CharcoalEngine.Scene
 {
 
-    class GBufferReliantDrawingSystem : DrawingSystem
+    class SSReflectionRenderer : DrawingSystem
     {
-        RenderTarget2D Output;
+        public RenderTarget2D Output;
         Effect effect;
         VertexPositionColor[] V;
 
-        public GBufferReliantDrawingSystem(Viewport v)
+        public SSReflectionRenderer(Viewport v)
         {
             viewport = v;
 
             Output = CreateStandardRenderTarget();
 
-            OutputMappings.Add("Output", Output);
-
-            effect = Engine.Content.Load<Effect>("Effects/PointLightEffect");
+            effect = Engine.Content.Load<Effect>("Effects/SSReflectionEffect");
             V = new VertexPositionColor[6];
 
             Random r = new Random();
@@ -50,7 +48,7 @@ namespace CharcoalEngine.Scene
             V[5] = new VertexPositionColor(new Vector3(1, -1, 0.0f), new Color(1.0f, 1.0f, 1.0f, 0));
         }
 
-        public override void Draw()
+        public void Draw(RenderTarget2D Normal, RenderTarget2D Depth, RenderTarget2D Diffuse)
         {
             Engine.g.SetRenderTarget(Output);
 
@@ -64,17 +62,15 @@ namespace CharcoalEngine.Scene
             effect.Parameters["FarClip"].SetValue(Camera.Viewport.MaxDepth);
             effect.Parameters["CameraPosition"].SetValue(Camera.Position);
 
-            effect.Parameters["NormalMap"].SetValue(InputMappings["Normal"].Texture);
-            effect.Parameters["DepthMap"].SetValue(InputMappings["Depth"].Texture);
-            effect.Parameters["DiffuseMap"].SetValue(InputMappings["Diffuse"].Texture);
-            
+            effect.Parameters["NormalMap"].SetValue(Normal);
+            effect.Parameters["DepthMap"].SetValue(Depth);
+            effect.Parameters["DiffuseMap"].SetValue(Diffuse);
+
             effect.CurrentTechnique.Passes[0].Apply();
 
             Engine.g.DrawUserPrimitives(PrimitiveType.TriangleList, V, 0, 2);
 
             Engine.g.SetRenderTarget(null);
-
-            base.Draw();
         }
     }
 }

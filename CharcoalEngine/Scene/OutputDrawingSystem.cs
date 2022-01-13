@@ -29,8 +29,10 @@ using CharcoalEngine.Object;
 
 namespace CharcoalEngine.Scene
 {
-    class OutputDrawingSystem : DrawingSystem
+    class OutputDrawingSystem
     {
+        public List<RenderTarget2D> Inputs = new List<RenderTarget2D>();
+
         public int ActiveInput {
             get
             {
@@ -38,7 +40,7 @@ namespace CharcoalEngine.Scene
             }
             set
             {
-                if ((value >= 0) && (value < InputMappings.Count))
+                if ((value >= 0) && (value < Inputs.Count))
                     _active_input = value;
             }
         }
@@ -50,9 +52,9 @@ namespace CharcoalEngine.Scene
             
         }
 
-        public override void Draw()
+        public void Draw()
         {
-            if (InputMappings.Count == 0) return;
+            if (Inputs.Count == 0) return;
 
             Engine.g.BlendState = BlendState.AlphaBlend;
             Engine.g.DepthStencilState = DepthStencilState.Default;
@@ -64,13 +66,10 @@ namespace CharcoalEngine.Scene
             SpriteBatch s = new SpriteBatch(Engine.g);
             s.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.DepthRead);
 
-            List<InputMapping> inputs = InputMappings.Values.ToList<InputMapping>();
-            s.Draw(inputs[ActiveInput].Texture, Engine.g.Viewport.Bounds, Color.White);
+            s.Draw(Inputs[ActiveInput], Engine.g.Viewport.Bounds, Color.White);
             
             s.End();
             s.Dispose();
-
-            base.Draw();
         }
     }
 }

@@ -31,13 +31,9 @@ namespace CharcoalEngine.Scene
             viewport = v;
 
             Output = new RenderTarget2D(Engine.g, v.Width, v.Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24);
-
-            OutputMappings.Add("Output", Output);
-
-            Items = Nodes;
         }
 
-        public override void Draw()
+        public void Draw()
         {
             Engine.g.BlendState = BlendState.AlphaBlend;
             Engine.g.DepthStencilState = DepthStencilState.Default;
@@ -48,16 +44,11 @@ namespace CharcoalEngine.Scene
             
             SpriteBatch s = new SpriteBatch(Engine.g);
             s.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.DepthRead);
-
-            s.Draw(InputMappings["Input"].Texture, InputMappings["Input"].Texture.Bounds, Color.White);
-            for (int i = 0; i < Items.Count; i++)
-                Items[i].DrawDebugMode();
+            
 
             s.End();
 
             Engine.g.SetRenderTarget(null);
-
-            base.Draw();
         }
     }
 }

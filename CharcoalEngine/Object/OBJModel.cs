@@ -34,17 +34,10 @@ namespace CharcoalEngine.Object
         public List<TexCoord> TexCoords = new List<TexCoord>();
         public List<Normal> Normals = new List<Normal>();
 
-        public OBJModel(string filename, DrawingSystem meshdrawer, Vector3 Position, Vector3 YawPitchRoll, float Scale, bool FlipAxis)
+        public OBJModel(string filename, Vector3 Position, Vector3 YawPitchRoll, float Scale, bool FlipAxis)
         {
             OBJLoader loader = new OBJLoader();
             loader.Load(filename, Engine.g, Position, YawPitchRoll, Scale, FlipAxis, false, this);
-            foreach (Transform group in Children)
-            {
-                foreach (Transform mesh in group.Children)
-                {
-                    meshdrawer.RegisterItem(mesh);
-                }
-            }
         }
     }
     public class Mesh : Transform
